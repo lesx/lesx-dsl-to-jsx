@@ -1,0 +1,46 @@
+{
+  "name": "lesx-dsl-to-js",
+  "version": "0.0.1",
+  "description": "lesx DSL编译成JSX",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf lib && babel src --out-dir lib --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lesx/lesx-dsl-to-jsx.git"
+  },
+  "keywords": [
+    "lesx",
+    "dsl",
+    "jsx"
+  ],
+  "author": "xiangzhong.wxz",
+  "license": "MIT",
+  "dependencies": {
+    "lesx-ast-walk": "^0.0.x",
+    "lesx-parser": "^0.0.x"
+  },
+  "devDependencies": {
+    "acorn-jsx-walk": "^1.0.1",
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "7.0.0-alpha.18",
+    "babel-eslint": "8.0.0-alpha.13",
+    "babel-helper-fixtures": "7.0.0-alpha.18",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-external-helpers": "7.0.0-alpha.18",
+    "babel-plugin-import": "^1.4.0",
+    "babel-plugin-istanbul": "^4.1.4",
+    "babel-plugin-syntax-typescript": "^7.0.0-alpha.19",
+    "babel-plugin-transform-inline-imports-commonjs": "^1.2.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "2.0.0-alpha.18",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-flow": "7.0.0-alpha.18",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "rimraf": "^2.5.4"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "presets": [
+    "stage-3",
+    "flow"
+  ],
+  "plugins": [
+    "add-module-exports",
+    "transform-runtime",
+    "external-helpers",
+    "syntax-typescript",
+    "transform-inline-imports-commonjs"
+  ],
+  "env": {
+    "test": {
+      "plugins": [ "istanbul" ]
+    }
+  }
+}
