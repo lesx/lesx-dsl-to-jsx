@@ -15,19 +15,17 @@ export function composeComponentImportCode(componentTags = [], uiLib) {
 
     const uiLibTags = getUiLibComponentsTags(uiLib);
 
-    console.log('uiLibTags:', uiLibTags);
-
-    componentTags = intersection(componentTags, uiLibTags);
+    const libComponentTags = intersection(componentTags, uiLibTags);
 
     let res = {
         uiLibImports: [],
         notInLibtags: difference(componentTags, uiLibTags),
     };
 
-    if(Array.isArray(componentTags) && componentTags.length) {
+    if (Array.isArray(libComponentTags) && libComponentTags.length) {
         res.uiLibImports.push(`
             import {
-                ${componentTags.join(', ')}
+                ${libComponentTags.join(', ')}
             } from '${uiLib.libName}';
         `);
     }
@@ -45,7 +43,7 @@ function normalize() {
         if (process.platform === 'win32' || process.platform === 'win64') {
             projectPath = projectPath.replace(/\\/g, '/').replace(/^([A-Z]+:)(\/[^\/]+)/, '$1');
         }
-    } catch(e) {
+    } catch (e) {
         projectPath = path.join(__dirname, '../../..');
     }
 
@@ -55,13 +53,14 @@ function normalize() {
 const projectPath = normalize();
 
 function getUiLibComponentsTags({
-    libName, libDirectory
+    libName,
+    libDirectory
 }) {
     const libPath = path.resolve(projectPath, 'node_modules', `${libName}/${libDirectory}`);
 
     console.log('libPath:', libPath);
 
-    const dir = fs.readdirSync(libPath).filter(item => !item.startsWith('_')).map(item => (item.charAt(0).toUpperCase()+item.slice(1)));
+    const dir = fs.readdirSync(libPath).filter(item => !item.startsWith('_')).map(item => (item.charAt(0).toUpperCase() + item.slice(1)));
 
     return dir;
 }
