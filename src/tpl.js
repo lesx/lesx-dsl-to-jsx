@@ -43,10 +43,18 @@ class Lesx extends Component {
         this._innerMethods = getInnerScope(this);
 
         // 外面注册进来的scope也放到state里面
-        this.state = Object.assign({}, props.scope);
+        this.state = Object.assign({}, module.exports.state, props.scope);
     }
 
     componentDidMount() {}
 }
+
+const mixin = {
+    getDefaultProps() {
+        return module.exports.props || {};
+    }
+};
+
+reactMixin.onClass(Lesx, mixin);
 
 module.exports = Lesx;

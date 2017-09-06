@@ -1,6 +1,6 @@
 {
   "name": "lesx-dsl-to-jsx",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "lesx DSL编译成JSX",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "lesx-ast-walk": "^0.0.x",
     "lesx-jsx": "^0.0.x",
     "lesx-parser": "^0.0.x",
+    "lodash.difference": "^4.5.0",
     "log-symbols": "^2.0.0"
   },
   "devDependencies": {
