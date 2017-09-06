@@ -20,7 +20,7 @@ const reactCodePath = path.resolve(__dirname, '../src/tpl.js');
 const reactCode = fse.readFileSync(reactCodePath, 'utf-8');
 
 export default ({
-    uiLib = 'antd',
+    uiLib,
     template = '',
     script = '',
     componentTags = [],
@@ -32,7 +32,8 @@ export default ({
         renderReactElements: ``, // React.createElement()代码
     };
 
-    const componentImportCode = composeComponentImportCode(componentTags, uiLib);
+    const getLibRes = composeComponentImportCode(componentTags, uiLib);
+    const componentImportCode = getLibRes.uiLibImports.join('');
 
     [].push.apply(composeRes.ahead, [
         `import React, {Component} from 'react';
@@ -62,13 +63,16 @@ export default ({
         console.log(`[Warning] 顶部插入代码报错：${e}`.red);
     }
 
-
     // 插入render方法
     try {
         jsCode = insertCodeToScript(jsCode, [{
             name: 'render', // 方法名
             body: `
                 ${composeRes.renderVars.join('')}
+
+                const {
+                    ${getLibRes.notInLibtags.join(',')}
+                } = this.props.components || {};
 
                 return ${composeRes.renderReactElements}
             `, // 插入的代码

@@ -1,17 +1,67 @@
 import difference from 'lodash.difference';
+const path = require('path');
+const fs = require('fs');
+const execSync = require('child_process').execSync;
+const intersection = require('lodash.intersection');
 
 export function isComponentTag(tag) {
     return /^[A-Z].+/.test(tag);
 }
 
-// TODO: 哪些组件需要从antd里获取，哪些不需要需要实现
-export function composeComponentImportCode(componentTags, uiLib) {
+// TODO: 哪些组件需要从antd里获取，哪些是传递进来的
+export function composeComponentImportCode(componentTags = [], uiLib) {
     // 需要排除jsx-control-statements的控制流管理标签
     componentTags = difference(componentTags, ['If', 'Choose', 'When', 'Otherwise', 'For', 'With']);
 
-    return Array.isArray(componentTags) && componentTags.length ? `
-        import {
-            ${componentTags.join(', ')}
-        } from '${uiLib}';
-    ` : '';
+    const uiLibTags = getUiLibComponentsTags(uiLib);
+
+    console.log('uiLibTags:', uiLibTags);
+
+    componentTags = intersection(componentTags, uiLibTags);
+
+    let res = {
+        uiLibImports: [],
+        notInLibtags: difference(componentTags, uiLibTags),
+    };
+
+    if(Array.isArray(componentTags) && componentTags.length) {
+        res.uiLibImports.push(`
+            import {
+                ${componentTags.join(', ')}
+            } from '${uiLib.libName}';
+        `);
+    }
+
+    return res;
+}
+
+// 获取项目的根路径
+function normalize() {
+    let projectPath;
+
+    try {
+        projectPath = execSync('git rev-parse --show-toplevel').toString().trim().replace(/\\n/g);
+
+        if (process.platform === 'win32' || process.platform === 'win64') {
+            projectPath = projectPath.replace(/\\/g, '/').replace(/^([A-Z]+:)(\/[^\/]+)/, '$1');
+        }
+    } catch(e) {
+        projectPath = path.join(__dirname, '../../..');
+    }
+
+    return projectPath;
+}
+
+const projectPath = normalize();
+
+function getUiLibComponentsTags({
+    libName, libDirectory
+}) {
+    const libPath = path.resolve(projectPath, 'node_modules', `${libName}/${libDirectory}`);
+
+    console.log('libPath:', libPath);
+
+    const dir = fs.readdirSync(libPath).filter(item => !item.startsWith('_')).map(item => (item.charAt(0).toUpperCase()+item.slice(1)));
+
+    return dir;
 }

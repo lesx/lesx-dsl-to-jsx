@@ -15,7 +15,7 @@ import composeJsCode from './compose-js-code';
 const specTags = ['style', 'template', 'script'];
 const needRaw = ['template']; // 这里只能再单独切出raw string
 
-export default code => {
+export default (code, uiLib) => {
     /** 将DSL拆解为style、template、script三部分 start */
     const ast = acornParse(code, {
         specTags,
@@ -59,6 +59,7 @@ export default code => {
             template: resContent.template,
             script: resContent.script,
             componentTags,
+            uiLib,
         }), // 组装js
     };
 
