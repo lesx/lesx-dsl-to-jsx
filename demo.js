@@ -12,6 +12,8 @@ const code = `
             <a onClick={() => {
                 alert(1);
             }}></a>
+
+            <Button>按钮</Button>
         </div>
     </template>
 
