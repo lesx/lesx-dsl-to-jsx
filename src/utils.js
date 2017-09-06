@@ -9,3 +9,9 @@ export function composeComponentImportCode(componentTags, uiLib) {
         } from '${uiLib}';
     ` : '';
 }
+
+export function trim(str = '') {
+    return typeof(str) === 'string' 
+    ? str.replace(/^(\s|\r|\n|\r\n)+|(\s|\r|\n|\r\n)+$/, '')
+    : str;
+}
