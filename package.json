@@ -1,5 +1,5 @@
 {
-  "name": "lesx-dsl-to-js",
+  "name": "lesx-dsl-to-jsx",
   "version": "0.0.2",
   "description": "lesx DSL编译成JSX",
   "main": "index.js",
