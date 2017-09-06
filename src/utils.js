@@ -3,9 +3,9 @@ export function isComponentTag(tag) {
 }
 
 export function composeComponentImportCode(componentTags, uiLib) {
-    return `
+    return Array.isArray(componentTags) && componentTags.length ? `
         import {
             ${componentTags.join(', ')}
         } from '${uiLib}';
-    `;
+    ` : '';
 }

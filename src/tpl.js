@@ -19,13 +19,15 @@ const getInnerScope = lesx => ({
 function autobind(methodNames) {
     return {
         componentWillMount() {
-            methodNames.forEach((name) => {
-                this[name] = this[name].bind(this, {
-                    setState: this._innerMethods.$setState,
-                    getRef: this._innerMethods.$getRef,
-                    refresh: this._innerMethods.$refresh,
-                    getProps: this._innerMethods.$getProps,
-                });
+            methodNames.forEach(name => {
+                if (typeof(this[name]) === 'function') {
+                    this[name] = this[name].bind(this, {
+                        setState: this._innerMethods.$setState,
+                        getRef: this._innerMethods.$getRef,
+                        refresh: this._innerMethods.$refresh,
+                        getProps: this._innerMethods.$getProps,
+                    });
+                }
             });
         }
     };
