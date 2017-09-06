@@ -35,7 +35,7 @@ export default code => {
                 resCollection[tagName] = node;
 
                 if (needRaw.includes(tagName)) {
-                    resContent[tagName] = code.slice(children[0].start, Math.max(0, children[children.length -1].end - 6));
+                    resContent[tagName] = code.slice(Math.max(0, children[0].start - 6), Math.max(0, children[children.length -1].end - 6));
                 } else {
                     resContent[tagName] = children[0].value;
                 }
