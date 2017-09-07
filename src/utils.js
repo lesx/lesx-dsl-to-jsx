@@ -1,14 +1,14 @@
-import difference from 'lodash.difference';
 const path = require('path');
 const fs = require('fs');
 const execSync = require('child_process').execSync;
 const intersection = require('lodash.intersection');
+const difference = require('lodash.difference');
 
 export function isComponentTag(tag) {
     return /^[A-Z].+/.test(tag);
 }
 
-// TODO: 哪些组件需要从antd里获取，哪些是传递进来的
+// 哪些组件需要从antd里获取，哪些是通过props传递进来的
 export function composeComponentImportCode(componentTags = [], uiLib) {
     // 需要排除jsx-control-statements的控制流管理标签
     componentTags = difference(componentTags, ['If', 'Choose', 'When', 'Otherwise', 'For', 'With']);
@@ -58,7 +58,7 @@ function getUiLibComponentsTags({
 }) {
     const libPath = path.resolve(projectPath, 'node_modules', `${libName}/${libDirectory}`);
 
-    console.log('libPath:', libPath);
+    // console.log('libPath:', libPath);
 
     const dir = fs.readdirSync(libPath).filter(item => !item.startsWith('_')).map(item => (item.charAt(0).toUpperCase() + item.slice(1)));
 
