@@ -1,6 +1,6 @@
 {
   "name": "lesx-dsl-to-jsx",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "lesx DSL编译成JSX",
   "main": "index.js",
   "scripts": {
