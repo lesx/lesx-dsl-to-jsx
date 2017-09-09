@@ -11,7 +11,7 @@ import {
     insertImportCode,
     insertCodeToScript,
     insertCodeToMethod,
-} from './code-inject';
+} from 'lesx-code-inject';
 
 require('colors');
 

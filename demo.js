@@ -28,4 +28,10 @@ const code = `
     </script>
 `;
 
-const res = trans(code);
+const res = trans(code, {
+    libName: 'antd',
+    libDirectory: 'lib',
+});
+
+console.log('res:');
+console.log(res);

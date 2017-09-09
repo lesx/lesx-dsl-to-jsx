@@ -40,5 +40,6 @@ const res = trans(code, {
 	libName: 'antd',
 	libDirectory: 'lib',
 }); // print a react component code
-
 ```
+
+具体见：`demo.js`，可以通过`node demo.js`来查看实际效果。
