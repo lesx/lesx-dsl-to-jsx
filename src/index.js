@@ -1,12 +1,4 @@
-import {
-    acornParse,
-} from 'lesx-parser';
-
-import walk, {
-    base
-} from 'lesx-ast-walk';
-
-import cheerio from 'cheeriox';
+import cheeriox from 'cheeriox';
 
 import {
     isComponentTag,
@@ -19,39 +11,13 @@ const needRaw = ['template']; // 这里只能再单独切出raw string
 
 export default (code, uiLib) => {
     /** 将DSL拆解为style、template、script三部分 start */
-    // const ast = acornParse(code, {
-    //     specTags,
-    // });
 
     const resContent = {}; // 收集特殊标签内部的内容，方便后面处理
-    const componentTags = []; // 在这里做收集，保证AST只遍历一次
+    let componentTags = []; // 在这里做收集，保证AST只遍历一次
 
-
-    /**walk(ast, {
-        LesxElement(node) {
-            const tagName = node.openingElement.name.name;
-            const children = node.children;
-
-            if (specTags.includes(tagName)) {
-                if(tagName === 'style') {
-                    console.log('node:', node);    
-                }
-
-                if (needRaw.includes(tagName)) {
-                    resContent[tagName] = code.slice(Math.max(0, children[0].start - 6), Math.max(0, children[children.length -1].end - 6));
-                } else {
-                    resContent[tagName] = children[0].value;
-                }
-            }
-
-            if(isComponentTag(tagName)) {
-                componentTags.push(tagName);
-            }
-        }
-    });*/
-
-    const $ = cheerio.load(code, {
+    const $ = cheeriox.load(code, {
         decodeEntities: false,
+        xmlMode: true,
     });
 
     const styleEl = $('style');
@@ -65,6 +31,11 @@ export default (code, uiLib) => {
 
     resContent['template'] = templateEl.html();
     resContent['script'] = scriptEl.html();
+
+
+    if (templateEl.length) {
+        componentTags = getComponentTag(templateEl[0]);
+    }
 
 
     // console.log('resContent:', resContent);
@@ -90,3 +61,22 @@ export default (code, uiLib) => {
 
     return lastRes;
 };
+
+
+function getComponentTag(el) {
+    let res = [];
+
+    if (el.children && el.children.length) {
+        el.children.forEach(child => {
+            if (child.name && isComponentTag(child.name)) {
+                res.push(child.name);
+            }
+
+            if (child.children && child.children.length) {
+                res = res.concat(getComponentTag(child));
+            }
+        });
+    }
+
+    return res;
+}
