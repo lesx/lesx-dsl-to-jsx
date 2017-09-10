@@ -74,7 +74,7 @@ export default (code, uiLib) => {
 
     /** 最后生成js/style代码 */
     const lastRes = {
-        style: resContent.style,
+        style: resContent.style, // style部分
         js: composeJsCode({
             template: resContent.template,
             script: resContent.script,
