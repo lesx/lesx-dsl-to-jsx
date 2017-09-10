@@ -59,8 +59,8 @@ export default (code, uiLib) => {
     const scriptEl = $('script');
 
     resContent['style'] = {
+        lang: styleEl.attr('lang') || 'sass',
         content: styleEl.html(),
-        lang: styleEl.attr('lang') || 'sass'
     };
 
     resContent['template'] = templateEl.html();
@@ -75,12 +75,15 @@ export default (code, uiLib) => {
     /** 最后生成js/style代码 */
     const lastRes = {
         style: resContent.style, // style部分
-        js: composeJsCode({
-            template: resContent.template,
-            script: resContent.script,
-            componentTags,
-            uiLib,
-        }), // 组装js
+        js: {
+            lang: 'js',
+            content: composeJsCode({
+                template: resContent.template,
+                script: resContent.script,
+                componentTags,
+                uiLib,
+            })
+        }, // 组装js
     };
 
     // console.log('lastRes:', lastRes);
