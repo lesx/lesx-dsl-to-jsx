@@ -13,6 +13,9 @@ import {
     insertCodeToMethod,
 } from 'lesx-code-inject';
 
+import getUndeclaredVars from 'lesx-undeclared-vars';
+const difference = require('lodash.difference');
+
 require('colors');
 
 
@@ -43,6 +46,7 @@ export default ({
         script
     ]);
 
+    // render方法中的变量声明
     composeRes.renderVars.push(`
         const {
             $setState,
@@ -56,7 +60,7 @@ export default ({
 
     try {
         composeRes.renderReactElements = lesxJsx(template);
-    } catch(e) {
+    } catch (e) {
         console.log(`template内容生成jsx出错：${e}`.red);
     }
 
@@ -90,6 +94,25 @@ export default ({
     }
 
     // console.log('jsCode:'.red, jsCode);
+
+    // 获取js中所有未声明的变量
+    let undeclaredVars = getUndeclaredVars(jsCode);
+
+    if (Array.isArray(undeclaredVars) && undeclaredVars.length) {
+        undeclaredVars = difference(undeclaredVars, ['undefined', 'null', 'window', 'NaN', 'Infinity']);
+
+        if (Array.isArray(undeclaredVars) && undeclaredVars.lengt) {
+            insertCodeToMethod(jsCode, [{
+                name: 'render',
+                code: `
+                    const ${
+                        undeclaredVars.join(', ')
+                    } = this;
+                `,
+                pos: 'prev'
+            }]);
+        }
+    }
 
     return jsCode;
 };
