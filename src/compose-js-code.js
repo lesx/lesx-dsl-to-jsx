@@ -120,7 +120,7 @@ export default({
         console.log(`[Warning] render方法插入代码报错：${e}`.red);
     }
 
-    console.log('jsCode:'.red, jsCode);
+    // console.log('jsCode:'.red, jsCode);
 
     return jsCode;
 };
