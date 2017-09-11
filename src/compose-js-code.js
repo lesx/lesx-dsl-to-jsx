@@ -52,12 +52,14 @@ export default ({
         } = this._innerMethods;
     `);
 
+    // console.log('template:', template);
+
     try {
-        composeRes.renderReactElements = lesxJsx(template);    
+        composeRes.renderReactElements = lesxJsx(template);
     } catch(e) {
         console.log(`template内容生成jsx出错：${e}`.red);
     }
-    
+
 
     let jsCode = reactCode;
 

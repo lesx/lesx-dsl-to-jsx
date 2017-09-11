@@ -13,13 +13,25 @@ export function composeComponentImportCode(componentTags = [], uiLib) {
     // 需要排除jsx-control-statements的控制流管理标签
     componentTags = difference(componentTags, ['If', 'Choose', 'When', 'Otherwise', 'For', 'With']);
 
-    const uiLibTags = getUiLibComponentsTags(uiLib);
+    const subComponentsTag = [];
 
-    const libComponentTags = intersection(componentTags, uiLibTags);
+    componentTags = componentTags.reduce((res, tag) => {
+        if(isSubComponent(tag)) {
+            subComponentsTag.push(tag);
+        } else {
+            res.push(tag);
+        }
+
+        return res;
+    }, []);
+
+    const uiLibTags = getUiLibComponentsTags(uiLib); // 获取ui库有哪些组件
+
+    const libComponentTags = intersection(componentTags, uiLibTags); // 在ui库里的组件
 
     let res = {
         uiLibImports: [],
-        notInLibtags: difference(componentTags, uiLibTags),
+        notInLibtags: difference(componentTags, uiLibTags), // 不在ui库里的组件
     };
 
     if (Array.isArray(libComponentTags) && libComponentTags.length) {
@@ -67,4 +79,8 @@ function getUiLibComponentsTags({
     }
 
     return dir;
+}
+
+function isSubComponent(tag) {
+    return ~tag.indexOf('.');
 }
