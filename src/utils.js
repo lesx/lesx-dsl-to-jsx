@@ -32,6 +32,7 @@ export function composeComponentImportCode(componentTags = [], uiLib) {
     let res = {
         uiLibImports: [],
         notInLibtags: difference(componentTags, uiLibTags), // 不在ui库里的组件
+        libComponentTags, // 在ui库中的组件标签名
     };
 
     if (Array.isArray(libComponentTags) && libComponentTags.length) {
