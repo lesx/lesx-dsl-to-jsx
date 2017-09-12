@@ -126,8 +126,6 @@ export default ({
                     ${undeclaredVars.join(', ')}
                 } = this;
 
-                console.log('navList' in this);
-
                 ${renderCode}
             `;
         }
