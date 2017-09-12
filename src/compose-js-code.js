@@ -73,6 +73,7 @@ export default ({
         console.log(`[Warning] 顶部插入代码报错：${e}`.red);
     }
 
+    // 未声明的变量获取全部来自：composeRes.renderReactElements
     var renderCode = `
         ${composeRes.renderVars.join('')}
 
