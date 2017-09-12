@@ -14,6 +14,8 @@ const code = `
             }}></a>
 
             <Button>按钮</Button>
+
+            <DatePicker.RangePicker />
         </div>
     </template>
 
