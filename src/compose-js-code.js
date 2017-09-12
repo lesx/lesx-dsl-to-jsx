@@ -1,13 +1,22 @@
 import fse from 'fs-extra';
 import path from 'path';
 
-import {composeComponentImportCode} from './utils';
+import {
+    composeComponentImportCode
+} from './utils';
 
 import lesxJsx from 'lesx-jsx';
 
-import {insertImportCode, insertCodeToScript, insertCodeToMethod} from 'lesx-code-inject';
+import {
+    insertImportCode,
+    insertCodeToScript,
+    insertCodeToMethod
+} from 'lesx-code-inject';
 
 import getUndeclaredVars from 'lesx-undeclared-vars';
+import beautify from 'js-beautify';
+import uniq from 'lodash.uniq';
+
 const difference = require('lodash.difference');
 
 require('colors');
@@ -15,12 +24,14 @@ require('colors');
 const reactCodePath = path.resolve(__dirname, '../src/tpl.js');
 const reactCode = fse.readFileSync(reactCodePath, 'utf-8');
 
-export default({
+export default ({
     uiLib,
     template = '',
     script = '',
     componentTags = []
 }) => {
+    componentTags = uniq(componentTags);
+
     // 返回整合好后的js代码
     const composeRes = {
         ahead: [], // 顶部插入
@@ -73,9 +84,19 @@ export default({
     `;
 
     // 获取js中所有未声明的变量
-    let undeclaredVars = getUndeclaredVars(`function render() {
+    var undeclaredVars = [];
+
+    try {
+        undeclaredVars = getUndeclaredVars(`function __render() {
             ${renderCode}
         }`);
+    } catch (e) {
+        console.log(`[lesx-dsl-to-jsx] 获取未声明的变量出错：${e}`.red);
+        console.log(`[lesx-dsl-to-jsx] 出错代码如下：`.red);
+        console.log(beautify(renderCode, {
+            indent_size: 4
+        }));
+    }
 
     if (Array.isArray(undeclaredVars) && undeclaredVars.length) {
         undeclaredVars = difference(undeclaredVars, getLibRes.libComponentTags.concat([
@@ -109,13 +130,11 @@ export default({
 
     // 插入render方法
     try {
-        jsCode = insertCodeToScript(jsCode, [
-            {
-                name: 'render', // 方法名
-                body: renderCode, // 插入的代码
-                isCover: true // 是否强制覆盖，默认不覆盖，设置为true则强制覆盖
-            }
-        ]);
+        jsCode = insertCodeToScript(jsCode, [{
+            name: 'render', // 方法名
+            body: renderCode, // 插入的代码
+            isCover: true // 是否强制覆盖，默认不覆盖，设置为true则强制覆盖
+        }]);
     } catch (e) {
         console.log(`[Warning] render方法插入代码报错：${e}`.red);
     }
