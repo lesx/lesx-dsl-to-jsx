@@ -16,12 +16,12 @@ export function composeComponentImportCode(componentTags = [], uiLib) {
     const subComponentsTag = [];
 
     componentTags = componentTags.reduce((res, tag) => {
-        if(isSubComponent(tag)) {
+        if (isSubComponent(tag)) {
             subComponentsTag.push(tag);
 
             let firstCompTag = tag.split('.')[0];
 
-            if(!componentTags.includes(firstCompTag)) {
+            if (!componentTags.includes(firstCompTag)) {
                 res.push(firstCompTag);
             }
         } else {
@@ -82,10 +82,22 @@ function getUiLibComponentsTags({
     let dir = [];
 
     if (fs.existsSync(libPath)) {
-        dir = fs.readdirSync(libPath).filter(item => !item.startsWith('_')).map(item => (item.charAt(0).toUpperCase() + item.slice(1)));
+        dir = fs.readdirSync(libPath).filter(item => !item.startsWith('_')).map(item => {
+            if (item.indexOf('-') > 0) {
+                item = item.split('-').map(curSub => upperFirstChar(curSub)).join('');
+
+                return item;
+            } else {
+                return upperFirstChar(item);
+            }
+        });
     }
 
     return dir;
+}
+
+function upperFirstChar(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function isSubComponent(tag) {
