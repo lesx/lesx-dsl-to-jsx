@@ -10,14 +10,14 @@ import lesxJsx from 'lesx-jsx';
 import {
     insertImportCode,
     insertCodeToScript,
-    insertCodeToMethod
+    insertCodeToMethod,
 } from 'lesx-code-inject';
 
 import getUndeclaredVars from 'lesx-undeclared-vars';
 import beautify from 'js-beautify';
 import uniq from 'lodash.uniq';
-
-const difference = require('lodash.difference');
+import difference from 'lodash.difference';
+import intersection from 'lodash.intersection';
 
 require('colors');
 
@@ -73,12 +73,8 @@ export default ({
         console.log(`[Warning] 顶部插入代码报错：${e}`.red);
     }
 
-    let renderCode = `
+    var renderCode = `
         ${composeRes.renderVars.join('')}
-
-        const {
-            ${getLibRes.notInLibtags.join(',')}
-        } = this.props.components || {};
 
         return ${composeRes.renderReactElements}
     `;
@@ -87,9 +83,14 @@ export default ({
     var undeclaredVars = [];
 
     try {
-        undeclaredVars = getUndeclaredVars(`function __render() {
-            ${renderCode}
-        }`);
+        // TODO: 这里可能需要优化，最好按照：从组装好的代码找出未声明的变量，然后再组装最终的代码/render中插入组件获取代码
+        undeclaredVars = uniq(getUndeclaredVars(`
+            ${jsCode}
+
+            function __render() {
+                ${renderCode}
+            }
+        `));
     } catch (e) {
         console.log(`[lesx-dsl-to-jsx] 获取未声明的变量出错：${e}`.red);
         console.log(`[lesx-dsl-to-jsx] 出错代码如下：`.red);
@@ -99,6 +100,7 @@ export default ({
     }
 
     if (Array.isArray(undeclaredVars) && undeclaredVars.length) {
+        // 去除掉一些全局变量
         undeclaredVars = difference(undeclaredVars, getLibRes.libComponentTags.concat([
             'React',
             'Component',
@@ -116,19 +118,32 @@ export default ({
             'Boolean',
             'RegExp',
             'console',
+            'alert',
         ]));
 
-        // console.log('undeclaredVars:', undeclaredVars);
+        // 获取真正未声明的组件，这一部分通过组件props传递进来
+        const realNotDefinedComponents = intersection(getLibRes.notInLibtags, undeclaredVars);
 
-        if (Array.isArray(undeclaredVars) && undeclaredVars.length) {
-            renderCode = `
-                const {
-                    ${undeclaredVars.join(', ')}
-                } = this;
+        // 未声明的变量，从this声明
+        undeclaredVars = difference(undeclaredVars, getLibRes.notInLibtags);
 
-                ${renderCode}
-            `;
-        }
+        // 组装render函数内部代码
+        renderCode = `
+            // 自带变量获取
+            ${composeRes.renderVars.join('')}
+
+            // 免写this
+            const {
+                ${undeclaredVars.join(', ')}
+            } = this;
+
+            // 未声明组件从props传递进来
+            const {
+                ${realNotDefinedComponents.join(',')}
+            } = this.props.components || this;
+
+            return ${composeRes.renderReactElements}
+        `;
     }
 
     // 插入render方法
