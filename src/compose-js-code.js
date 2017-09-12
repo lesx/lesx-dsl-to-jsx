@@ -114,14 +114,19 @@ export default ({
             'Function',
             'String',
             'Boolean',
-            'RegExp'
+            'RegExp',
+            'console',
         ]));
+
+        // console.log('undeclaredVars:', undeclaredVars);
 
         if (Array.isArray(undeclaredVars) && undeclaredVars.length) {
             renderCode = `
                 const {
                     ${undeclaredVars.join(', ')}
                 } = this;
+
+                console.log('navList' in this);
 
                 ${renderCode}
             `;
@@ -139,7 +144,10 @@ export default ({
         console.log(`[Warning] render方法插入代码报错：${e}`.red);
     }
 
-    // console.log('jsCode:'.red, jsCode);
+    // console.log('jsCode:'.red);
+    // console.log(beautify(jsCode, {
+    //     indent_size: 4
+    // }));
 
     return jsCode;
 };

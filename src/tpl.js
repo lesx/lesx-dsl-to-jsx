@@ -16,6 +16,8 @@ const getInnerScope = lesx => ({
     },
 });
 
+const curModule = module.exports;
+
 function autobind(methodNames) {
     return {
         componentWillMount() {
@@ -27,14 +29,17 @@ function autobind(methodNames) {
                         refresh: this._innerMethods.$refresh,
                         getProps: this._innerMethods.$getProps,
                     });
+                } else if (!['state', 'props'].includes(name)) {
+                    this[name] = curModule[name];
                 }
             });
         }
     };
 }
 
-@reactMixin.decorate(module.exports)
-@reactMixin.decorate(autobind(Object.keys(module.exports)))
+
+@reactMixin.decorate(curModule)
+@reactMixin.decorate(autobind(Object.keys(curModule)))
 class Lesx extends Component {
     constructor(props, context) {
         super(props, context);
