@@ -77,7 +77,7 @@ export default ({
     var renderCode = `
         ${composeRes.renderVars.join('')}
 
-        return ${composeRes.renderReactElements}
+        ${composeRes.renderReactElements}
     `;
 
     // 获取js中所有未声明的变量
@@ -143,7 +143,7 @@ export default ({
                 ${realNotDefinedComponents.join(',')}
             } = this.props.components || this;
 
-            return ${composeRes.renderReactElements}
+            ${composeRes.renderReactElements}
         `;
     }
 
